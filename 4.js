@@ -34,22 +34,29 @@ const includesRequiredFields = (passport) => {
   );
 };
 
+const isValidBirthYear = (year) => year >= 1920 && year <= 2002;
+const isValidIssueYear = (year) => year >= 2010 && year <= 2020;
+const isValidExpirationYear = (year) => year >= 2020 && year <= 2030;
+const isValidHeight = ({ units, value }) =>
+  (units === 'cm' && value >= 150 && value <= 193) ||
+  (units === 'in' && value >= 59 && value <= 76);
+const isValidHairColor = (color) => /^#[a-z0-9]{6}$/.test(color);
+const isValidEyeColor = (color) =>
+  ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'].includes(color);
+const isValidPassportID = (id) =>
+  !Number.isNaN(parseInt(id)) && id.length === 9;
+
 const isValidPassport = (passport) => {
   if (!includesRequiredFields(passport)) return false;
   const { byr, iyr, eyr, hgt, hcl, ecl, pid } = parsePassport(passport);
   return (
-    byr >= 1920 &&
-    byr <= 2002 &&
-    iyr >= 2010 &&
-    iyr <= 2020 &&
-    eyr >= 2020 &&
-    eyr <= 2030 &&
-    ((hgt.units === 'cm' && hgt.value >= 150 && hgt.value <= 193) ||
-      (hgt.units === 'in' && hgt.value >= 59 && hgt.value <= 76)) &&
-    /^#[a-z0-9]{6}$/.test(hcl) &&
-    ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'].includes(ecl) &&
-    !Number.isNaN(parseInt(pid)) &&
-    pid.length === 9
+    isValidBirthYear(byr) &&
+    isValidIssueYear(iyr) &&
+    isValidExpirationYear(eyr) &&
+    isValidHeight(hgt) &&
+    isValidHairColor(hcl) &&
+    isValidEyeColor(ecl) &&
+    isValidPassportID(pid)
   );
 };
 
